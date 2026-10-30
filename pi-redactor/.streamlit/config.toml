@@ -1,0 +1,3 @@
+[server]
+# Avoids the harmless "torch.classes ... no running event loop" traceback from the file watcher
+fileWatcherType = "none"
