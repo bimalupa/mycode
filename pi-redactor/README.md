@@ -69,12 +69,9 @@ streamlit run app.py
 | **Analyst** | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ |
 | **Compliance Officer** | ✅ | ✅ | ✅ | ✅ | ✅ (filter + CSV/JSONL export) | ✅ |
 
-Demo accounts (stored as PBKDF2 hashes in `data/users.json`; **change them before any real use**):
-
-| Username | Password | Role |
-|---|---|---|
-| `analyst` | `Analyst@123` | Analyst |
-| `compliance` | `Compliance@123` | Compliance Officer |
+Accounts `analyst` (Analyst) and `compliance` (Compliance Officer) are provided. Passwords are stored only as PBKDF2
+hashes in `data/users.json` and are shared with the team out of band, never in the repository. Set your own with
+`python scripts/manage_users.py passwd <username>`.
 
 ```bash
 python scripts/manage_users.py list
