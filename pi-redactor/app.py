@@ -67,6 +67,18 @@ def purge(doc_ids):
         APPROVALS.pop(doc_id, None)
 
 
+def legend(types) -> None:
+    """Colour key for the highlights: one chip per PI type present, plus the 'not selected' style."""
+    chip = ("display:inline-block;margin:0 6px 6px 0;padding:2px 8px;border-radius:4px;font-size:0.8em;"
+            "color:#111;")
+    chips = [f"<span style='{chip}background:{COLORS.get(t, '#dddddd')}' title='{html.escape(ENTITY_CATALOG.get(t, t))}'>"
+             f"{html.escape(t)}</span>" for t in sorted(set(types))]
+    chips.append(f"<span style='{chip}background:#e5e5e5;color:#777;text-decoration:line-through'>"
+                 f"not selected - stays visible</span>")
+    st.markdown("<div style='margin:4px 0 8px'><span style='font-size:0.8em;opacity:0.7;margin-right:8px'>"
+                "Colour key:</span>" + "".join(chips) + "</div>", unsafe_allow_html=True)
+
+
 def end_session(username: str, event: str) -> None:
     """Remove this user's documents from memory on logout / timeout. Items awaiting compliance approval stay."""
     mine = [i for i, d in DOCS.items()
@@ -299,10 +311,14 @@ with tab_review:
         for note in state.get("notes", []):
             st.warning(note, icon="⚠️")
         m = st.columns(4)
-        m[0].metric("PI detected", len(dets))
-        m[1].metric("Selected for redaction", sum(approvals.get(d.id, d.approved) for d in dets))
-        m[2].metric("LLM: not PI", sum(1 for d in dets if d.llm_verdict is False))
-        m[3].metric("Found by LLM", sum(1 for d in dets if d.source == "llm"))
+        m[0].metric("PI detected", len(dets), help="All candidate personal-information items found in this document.")
+        m[1].metric("Selected for redaction", sum(approvals.get(d.id, d.approved) for d in dets),
+                    help="Ticked items. Only these are removed when the document is approved.")
+        m[2].metric("LLM: not PI", sum(1 for d in dets if d.llm_verdict is False),
+                    help="Items the LLM review judged not to be personal information in context. They start "
+                         "unticked - check the Why column and tick them if you disagree.")
+        m[3].metric("Found by LLM", sum(1 for d in dets if d.source == "llm"),
+                    help="Items the pattern/NER scanner missed and the LLM found from context.")
 
         b = st.columns(4)
 
@@ -320,6 +336,7 @@ with tab_review:
         if b[3].button(f"Only confidence ≥ {auto_score}"):
             bulk(lambda d: d.score >= auto_score)
 
+        legend(d.entity_type for d in dets)
         left, right = st.columns([1.1, 1])
         with right:
             st.markdown("**Detections** - untick anything that should stay visible")
@@ -459,6 +476,7 @@ with tab_results:
         st.markdown("#### Before / after")
         pick = st.selectbox("Compare", done, format_func=lambda i: DOCS[i]["name"])
         s = states[pick]
+        legend(d.entity_type for d in s["detections"])
         after = {seg.id: seg.text for seg in formats.extract(s["file_name"], s["redacted_bytes"])}
         by_seg = {}
         for d in s["detections"]:
