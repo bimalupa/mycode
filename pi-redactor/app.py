@@ -16,6 +16,7 @@ from pi_redactor.agents import PolicyAssistant, ReviewAgent
 from pi_redactor.audit import audit, read_audit
 from pi_redactor.auth import ROLES, authenticate, can, locked_for, session_expired
 from pi_redactor.config import settings
+from pi_redactor.file_dialog import browse
 from pi_redactor.detection import DEFAULT_ENTITIES, ENTITY_CATALOG, PIDetector
 from pi_redactor.graph import RedactionPipeline
 from pi_redactor.guardrails import Guard
@@ -66,6 +67,15 @@ def purge(doc_ids):
         APPROVALS.pop(doc_id, None)
 
 
+def end_session(username: str, event: str) -> None:
+    """Remove this user's documents from memory on logout / timeout. Items awaiting compliance approval stay."""
+    mine = [i for i, d in DOCS.items()
+            if d.get("status") != "submitted" and username in (d.get("scanned_by"), d.get("approved_by"))]
+    purge(mine)
+    audit(event, user=username, documents_purged=len(mine))
+    ss.clear()
+
+
 def redacted_name(name: str) -> str:
     p = Path(name)
     return f"{p.stem}_redacted{p.suffix}"
@@ -114,8 +124,7 @@ def login_page(message: str = ""):
 
 user = ss.get("user")
 if user and session_expired(user):
-    audit("session_timeout", user=user["username"])
-    ss.clear()
+    end_session(user["username"], "session_timeout")
     login_page("Your session expired after inactivity. Please sign in again.")
 if not user:
     login_page()
@@ -127,9 +136,10 @@ is_officer = can(user, "approve")
 with st.sidebar:
     st.title("🛡️ PI Redaction Utility")
     st.markdown(f"👤 **{user['name']}**  \n`{ROLES[role]}`")
-    if st.button("Log out", use_container_width=True):
-        audit("logout", user=reviewer)
-        ss.clear()
+    if st.button("Log out", use_container_width=True,
+                 help="Signs you out and clears your documents from memory "
+                      "(items submitted for compliance approval are kept)."):
+        end_session(reviewer, "logout")
         st.rerun()
     entities = st.multiselect("PI categories", list(ENTITY_CATALOG), default=DEFAULT_ENTITIES,
                               format_func=lambda e: f"{e} - {ENTITY_CATALOG[e]}")
@@ -176,16 +186,45 @@ with tab_scan:
                                   accept_multiple_files=True) or []:
             loaders.append((f.name, f.getvalue, {"source": "upload"}))
     elif source == "Local folder":
-        folder = st.text_input("Folder path", value=str(Path("samples").resolve()))
-        recursive = st.checkbox("Include sub-folders")
-        path = Path(folder)
-        if path.is_dir():
-            found = sorted(p for p in (path.rglob("*") if recursive else path.glob("*"))
-                           if p.is_file() and formats.is_supported(p.name))
-            chosen = st.multiselect("Files", found, default=found, format_func=lambda p: str(p.relative_to(path)))
+        ss.setdefault("folder_input", str(Path("samples").resolve()))
+        ss.setdefault("picked_files", [])
+        b1, b2, _ = st.columns([1, 1, 3])
+        no_dialog = ("A native file dialog isn't available here (the app is not running on a desktop). "
+                     "Type the folder path instead.")
+        if b1.button("📂 Browse folder", use_container_width=True):
+            picked = browse("folder", ss.folder_input)
+            if picked is None:
+                st.error(no_dialog)
+            elif picked:
+                ss.folder_input, ss.picked_files = picked[0], []
+        if b2.button("📄 Pick files", use_container_width=True):
+            picked = browse("files", ss.folder_input, " ".join(f"*{e}" for e in sorted(formats.SUPPORTED)))
+            if picked is None:
+                st.error(no_dialog)
+            elif picked:
+                ss.picked_files = [p for p in picked if formats.is_supported(p)]
+                skipped = len(picked) - len(ss.picked_files)
+                if skipped:
+                    st.warning(f"{skipped} unsupported file(s) ignored.")
+        if ss.picked_files:
+            files = [Path(p) for p in ss.picked_files]
+            chosen = st.multiselect("Picked files", files, default=files, format_func=lambda p: p.name)
             loaders += [(p.name, p.read_bytes, {"source": "local"}) for p in chosen]
+            if st.button("✖ Clear picked files"):
+                ss.picked_files = []
+                st.rerun()
         else:
-            st.warning("Folder not found.")
+            folder = st.text_input("Folder path", key="folder_input")
+            recursive = st.checkbox("Include sub-folders")
+            path = Path(folder)
+            if path.is_dir():
+                found = sorted(p for p in (path.rglob("*") if recursive else path.glob("*"))
+                               if p.is_file() and formats.is_supported(p.name))
+                chosen = st.multiselect("Files", found, default=found,
+                                        format_func=lambda p: str(p.relative_to(path)))
+                loaders += [(p.name, p.read_bytes, {"source": "local"}) for p in chosen]
+            else:
+                st.warning("Folder not found.")
     else:
         if not settings.m365_enabled:
             st.info("Configure M365_TENANT_ID, M365_CLIENT_ID and M365_CLIENT_SECRET in `.env` "

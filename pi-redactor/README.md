@@ -40,7 +40,7 @@ flowchart LR
 
 | Expectation / constraint | How it is met |
 |---|---|
-| Upload and selection interface | Upload, local folder (with sub-folders) or Microsoft 365 drive folder; multi-select files |
+| Upload and selection interface | Upload, local folder (native **Browse folder** / **Pick files** dialog, sub-folders) or Microsoft 365 drive folder; multi-select files |
 | Automatic detection & highlighting | Colour-coded highlights per category with confidence, source and reason |
 | User approval before permanent redaction | LangGraph pauses at `human_review`; reviewer ticks/unticks items, adds missed text, bulk actions |
 | Bulk processing | Parallel scan (thread pool); "approve & redact all pending" |
@@ -88,6 +88,7 @@ Maker-checker flow: the analyst scans, reviews and clicks **Submit for complianc
 (signed in from any browser) sees the document marked *submitted*, adjusts if needed and approves. The audit trail records
 login/logout/failed logins, who scanned, who submitted, who approved (with role) and audit exports. Accounts lock for
 5 minutes after 5 failed attempts; sessions expire after 30 minutes of inactivity (`SESSION_TIMEOUT_MINUTES`).
+On logout or timeout the user's documents are purged from memory (items awaiting compliance approval are kept).
 In production, replace local accounts with Microsoft Entra ID single sign-on.
 
 ## Demo script (5 minutes)
