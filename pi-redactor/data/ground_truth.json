@@ -1,0 +1,375 @@
+{
+  "custom_keywords": [
+    "Project Falcon"
+  ],
+  "files": {
+    "onboarding_letter.docx": [
+      {
+        "entity_type": "PERSON",
+        "text": "Jennifer Williams"
+      },
+      {
+        "entity_type": "EMPLOYEE_ID",
+        "text": "EMP39260"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Agra"
+      },
+      {
+        "entity_type": "IN_AADHAAR",
+        "text": "2181 5908 3016"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "NCHPC8609D"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "jennifer.51@yahoo.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 74943 61750"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Omya Boase"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "omya.90@gmail.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 90559 86414"
+      },
+      {
+        "entity_type": "CUSTOM_KEYWORD",
+        "text": "Project Falcon"
+      }
+    ],
+    "customer_list.xlsx": [
+      {
+        "entity_type": "PERSON",
+        "text": "Chandran Kant"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "chandran.34@hotmail.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 82202 22770"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Gurgaon"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "LJHPZ2319J"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Darika Golla"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "darika.73@hotmail.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 98676 55020"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Jalandhar"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "BVCPY8955W"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Samesh Taneja"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "samesh.86@yahoo.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 86275 86008"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Wardbury"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "VLAPO5291P"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Finn Mital"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "finn.37@yahoo.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 95173 47674"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Chelsealand"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "NRIPW6563E"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Nitesh Oommen"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "nitesh.32@yahoo.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 74957 40403"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Lake Chrisside"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "TSKPE8907Y"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Gregory Crawford"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "gregory.81@gmail.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 82857 62175"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Bhalswa Jahangir Pur"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "KTBPD0928D"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Dayita Sehgal"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "dayita.88@hotmail.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 70835 19216"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Andrewmouth"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "OPPPJ1215X"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Bruce Brown"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "bruce.71@gmail.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 97159 31160"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Katni"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "LFLPY3888K"
+      }
+    ],
+    "project_kickoff.pptx": [
+      {
+        "entity_type": "CUSTOM_KEYWORD",
+        "text": "Project Falcon"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Jerry Dunn"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "jerry.38@yahoo.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 90094 35578"
+      },
+      {
+        "entity_type": "EMPLOYEE_ID",
+        "text": "EMP23389"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Fitan Goda"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "fitan.39@gmail.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 85403 35782"
+      },
+      {
+        "entity_type": "EMPLOYEE_ID",
+        "text": "EMP21130"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Baghyawati Agrawal"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "baghyawati.30@yahoo.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 75570 26651"
+      },
+      {
+        "entity_type": "EMPLOYEE_ID",
+        "text": "EMP37661"
+      }
+    ],
+    "incident_report.pdf": [
+      {
+        "entity_type": "PERSON",
+        "text": "Manya Rao"
+      },
+      {
+        "entity_type": "EMPLOYEE_ID",
+        "text": "EMP76918"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "manya.13@yahoo.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 78252 37889"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Ekalinga Joshi"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Ghaziabad"
+      },
+      {
+        "entity_type": "IN_AADHAAR",
+        "text": "4902 2279 1805"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "VQQPR7180H"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 98600 67688"
+      },
+      {
+        "entity_type": "CREDIT_CARD",
+        "text": "4111 1111 1111 1111"
+      }
+    ],
+    "support_chat.txt": [
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "aadi.45@yahoo.com"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Aadi Dora"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 71382 22811"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "Dhule"
+      },
+      {
+        "entity_type": "IN_AADHAAR",
+        "text": "9801 7598 9834"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Priya"
+      },
+      {
+        "entity_type": "LOCATION",
+        "text": "459 Wells Crescent"
+      }
+    ],
+    "salary_revision.eml": [
+      {
+        "entity_type": "PERSON",
+        "text": "Julie Webb MD"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "julie.35@hotmail.com"
+      },
+      {
+        "entity_type": "PHONE_NUMBER",
+        "text": "+91 97525 68658"
+      },
+      {
+        "entity_type": "PERSON",
+        "text": "Janaki Din"
+      },
+      {
+        "entity_type": "EMAIL_ADDRESS",
+        "text": "janaki.22@hotmail.com"
+      },
+      {
+        "entity_type": "IN_PAN",
+        "text": "XLAPK8770M"
+      },
+      {
+        "entity_type": "EMPLOYEE_ID",
+        "text": "EMP53450"
+      },
+      {
+        "entity_type": "CUSTOM_KEYWORD",
+        "text": "Project Falcon"
+      }
+    ]
+  }
+}

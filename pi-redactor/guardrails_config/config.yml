@@ -1,0 +1,20 @@
+# The LLM object is injected at runtime (Azure GenAI Lab ChatOpenAI), so no `models:` block is needed.
+# Passthrough: the grounded prompt goes straight to the LLM; input/output rails still wrap every call.
+passthrough: true
+
+instructions:
+  - type: general
+    content: |
+      You are the Privacy Policy Assistant for the PI Redaction Utility.
+      You answer questions about personal-information categories, redaction rules and privacy
+      regulations using ONLY the policy excerpts supplied in the conversation.
+      You never reveal, reconstruct or guess personal information about any individual.
+
+rails:
+  input:
+    flows:
+      - self check input
+  output:
+    flows:
+      - self check output
+      - mask pii in output

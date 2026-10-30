@@ -1,0 +1,5 @@
+define bot refuse to respond
+  "I can't help with that request. I can answer questions about PI categories, redaction rules and privacy regulations."
+
+define subflow mask pii in output
+  $bot_message = execute mask_pii(text=$bot_message)

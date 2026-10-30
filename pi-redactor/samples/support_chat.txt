@@ -1,0 +1,7 @@
+Support chat transcript #88213
+Agent: Hello, this is Priya from support. Can I have your registered email?
+Customer: Sure, it's aadi.45@yahoo.com. My name is Aadi Dora.
+Agent: Thanks. And the mobile number on the account?
+Customer: +91 71382 22811. I moved to 459 Wells Crescent, Dhule last month.
+Customer: My Aadhaar is 9801 7598 9834 if you need it for KYC.
+Agent: Please don't share that here. I've updated your address.
