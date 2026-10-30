@@ -32,6 +32,19 @@ ENTITY_CATALOG = {
 }
 logging.getLogger("presidio-analyzer").setLevel(logging.ERROR)
 
+
+def _use_offline_suffix_list() -> None:
+    """Presidio's email validator (tldextract) downloads the public suffix list at first use; behind
+    corporate proxies that fails with a traceback. The bundled snapshot is sufficient, so skip the download."""
+    try:
+        import tldextract.tldextract as tx
+        tx.TLD_EXTRACTOR.suffix_list_urls = ()
+    except Exception as exc:
+        log.debug("tldextract offline mode not applied: %s", exc)
+
+
+_use_offline_suffix_list()
+
 DEFAULT_ENTITIES = [e for e in ENTITY_CATALOG if e not in {"DATE_TIME", "URL"}]
 NER_ENTITIES = {"PERSON", "LOCATION", "NRP", "DATE_TIME"}
 
