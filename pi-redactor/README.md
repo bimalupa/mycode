@@ -5,6 +5,10 @@ PDF, text and email files, with human approval, layout-preserving output, audit 
 
 ## Architecture
 
+![Architecture](docs/architecture.png)
+
+Download: [PNG](docs/architecture.png) · [SVG](docs/architecture.svg) · [PDF](docs/architecture.pdf)
+
 ```mermaid
 flowchart LR
     U[Upload / Local folder / Microsoft 365] --> E[extract<br/>in-memory parsers]

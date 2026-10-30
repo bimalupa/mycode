@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2010" height="990" viewBox="0 0 2010 990" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#475569"/></marker></defs><rect width="2010" height="990" fill="#ffffff"/><text x="30" y="46" font-size="30" font-weight="800" fill="#0f172a">AI-Powered Sensitive Personal Information Detection &amp; Redaction Utility</text>
+<text x="30" y="74" font-size="16" fill="#475569">Solution architecture - LangGraph stateful pipeline with human-in-the-loop approval, in-memory processing, hybrid RAG and guardrails</text>
+<rect x="30" y="110" width="260" height="250" rx="12" fill="#eef0ff" stroke="#4f5bd5" stroke-width="2"/>
+<text x="278" y="348" text-anchor="end" font-size="12" font-weight="600" fill="#4f5bd5" letter-spacing="0.5">RBAC</text>
+<text x="44" y="140" font-size="18" font-weight="700" fill="#2f3a9e">Users &amp; access</text>
+<text x="44" y="166" font-size="15" fill="#1f2937" font-weight="600">Analyst</text>
+<text x="44" y="188" font-size="15" fill="#1f2937">scan, review, submit</text>
+<text x="44" y="210" font-size="15" fill="#1f2937" font-weight="600">Compliance Officer</text>
+<text x="44" y="232" font-size="15" fill="#1f2937">approve, purge, audit trail</text>
+<text x="44" y="254" font-size="15" fill="#1f2937">Login: PBKDF2 hashes,</text>
+<text x="44" y="276" font-size="15" fill="#1f2937">lockout, session timeout</text>
+<text x="44" y="298" font-size="15" fill="#1f2937">Production: Entra ID SSO</text>
+<rect x="30" y="400" width="260" height="210" rx="12" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+<text x="278" y="598" text-anchor="end" font-size="12" font-weight="600" fill="#64748b" letter-spacing="0.5">INPUT</text>
+<text x="44" y="430" font-size="18" font-weight="700" fill="#334155">Document sources</text>
+<text x="44" y="456" font-size="15" fill="#1f2937">Upload (drag &amp; drop)</text>
+<text x="44" y="478" font-size="15" fill="#1f2937">Local folder (bulk, sub-folders)</text>
+<text x="44" y="500" font-size="15" fill="#1f2937">Microsoft 365 via Graph API</text>
+<text x="44" y="522" font-size="15" fill="#1f2937">(OneDrive / SharePoint)</text>
+<text x="44" y="544" font-size="15" fill="#1f2937" font-weight="600">docx xlsx pptx pdf txt csv eml</text>
+<rect x="320" y="110" width="1380" height="82" rx="12" fill="#eef0ff" stroke="#4f5bd5" stroke-width="2"/>
+<text x="1688" y="180" text-anchor="end" font-size="12" font-weight="600" fill="#4f5bd5" letter-spacing="0.5">UI</text>
+<text x="334" y="140" font-size="18" font-weight="700" fill="#2f3a9e">Streamlit UI</text>
+<text x="334" y="166" font-size="15" fill="#1f2937">1 Select &amp; scan   |   2 Review &amp; approve (highlights, approve / reject, add missed text)   |   3 Results &amp; reports   |   4 Policy assistant   |   5 Audit trail (Compliance only)</text>
+<rect x="320" y="220" width="1380" height="400" rx="16" fill="none" stroke="#0f8b7d" stroke-width="2" stroke-dasharray="10 7"/>
+<text x="338" y="244" font-size="14" font-weight="700" fill="#0f8b7d" letter-spacing="0.6">IN-MEMORY PROCESSING BOUNDARY - LangGraph StateGraph + InMemorySaver checkpointer - no document content written to disk, purge on demand</text>
+<rect x="345" y="262" width="200" height="104" rx="12" fill="#e6f6f4" stroke="#0f8b7d" stroke-width="2"/>
+<text x="359" y="292" font-size="17" font-weight="700" fill="#0b5f56">1  extract</text>
+<text x="359" y="318" font-size="14" fill="#1f2937">Parse file into</text>
+<text x="359" y="339" font-size="14" fill="#1f2937">addressable segments</text>
+<rect x="570" y="262" width="200" height="104" rx="12" fill="#e6f6f4" stroke="#0f8b7d" stroke-width="2"/>
+<text x="584" y="292" font-size="17" font-weight="700" fill="#0b5f56">2  detect</text>
+<text x="584" y="318" font-size="14" fill="#1f2937">PI candidates with</text>
+<text x="584" y="339" font-size="14" fill="#1f2937">confidence + reason</text>
+<rect x="795" y="262" width="200" height="104" rx="12" fill="#e6f6f4" stroke="#0f8b7d" stroke-width="2"/>
+<text x="809" y="292" font-size="17" font-weight="700" fill="#0b5f56">3  llm_review</text>
+<text x="809" y="318" font-size="14" fill="#1f2937">Validate low-confidence,</text>
+<text x="809" y="339" font-size="14" fill="#1f2937">find contextual PI</text>
+<rect x="1020" y="262" width="200" height="104" rx="12" fill="#e6f6f4" stroke="#0f8b7d" stroke-width="2"/>
+<text x="1034" y="292" font-size="17" font-weight="700" fill="#0b5f56">4  human_review</text>
+<text x="1034" y="318" font-size="14" fill="#1f2937">interrupt() - waits</text>
+<text x="1034" y="339" font-size="14" fill="#1f2937">for approval</text>
+<rect x="1245" y="262" width="200" height="104" rx="12" fill="#e6f6f4" stroke="#0f8b7d" stroke-width="2"/>
+<text x="1259" y="292" font-size="17" font-weight="700" fill="#0b5f56">5  redact</text>
+<text x="1259" y="318" font-size="14" fill="#1f2937">Format-native,</text>
+<text x="1259" y="339" font-size="14" fill="#1f2937">layout preserved</text>
+<rect x="1470" y="262" width="200" height="104" rx="12" fill="#e6f6f4" stroke="#0f8b7d" stroke-width="2"/>
+<text x="1484" y="292" font-size="17" font-weight="700" fill="#0b5f56">6  verify &amp; report</text>
+<text x="1484" y="318" font-size="14" fill="#1f2937">Re-scan output for</text>
+<text x="1484" y="339" font-size="14" fill="#1f2937">residual PI</text>
+<path d="M 547 314 L 567 314" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 772 314 L 792 314" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 997 314 L 1017 314" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 1222 314 L 1242 314" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 1447 314 L 1467 314" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="783" y="256" text-anchor="middle" font-size="12" font-style="italic" fill="#475569">if LLM enabled</text>
+<rect x="345" y="405" width="425" height="200" rx="12" fill="#fff3e6" stroke="#e07b12" stroke-width="2"/>
+<text x="758" y="593" text-anchor="end" font-size="12" font-weight="600" fill="#e07b12" letter-spacing="0.5">DATA PROTECTION</text>
+<text x="359" y="435" font-size="18" font-weight="700" fill="#9a4f00">Detection engine</text>
+<text x="359" y="461" font-size="14" fill="#1f2937" font-weight="600">Microsoft Presidio + spaCy en_core_web_lg</text>
+<text x="359" y="482" font-size="14" fill="#1f2937">Custom recognizers: Aadhaar, PAN, passport,</text>
+<text x="359" y="503" font-size="14" fill="#1f2937">phone, street address, employee ID, keywords</text>
+<text x="359" y="524" font-size="14" fill="#1f2937">Spreadsheet column-header awareness</text>
+<text x="359" y="545" font-size="14" fill="#1f2937">Document-wide value propagation</text>
+<text x="359" y="566" font-size="14" fill="#1f2937">Pattern-over-NER overlap resolution</text>
+<rect x="795" y="405" width="200" height="200" rx="12" fill="#f4ecff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="983" y="593" text-anchor="end" font-size="12" font-weight="600" fill="#8b5cf6" letter-spacing="0.5">AI</text>
+<text x="809" y="435" font-size="18" font-weight="700" fill="#5b2bb5">LLM review agent</text>
+<text x="809" y="461" font-size="14" fill="#1f2937" font-weight="600">Azure GenAI Lab</text>
+<text x="809" y="482" font-size="14" fill="#1f2937" font-weight="600">gpt-4o-mini</text>
+<text x="809" y="503" font-size="14" fill="#1f2937">Confident PI masked</text>
+<text x="809" y="524" font-size="14" fill="#1f2937">before sending</text>
+<text x="809" y="545" font-size="14" fill="#1f2937">Accept only text found</text>
+<text x="809" y="566" font-size="14" fill="#1f2937">verbatim (no halluc.)</text>
+<rect x="1020" y="405" width="200" height="200" rx="12" fill="#eef0ff" stroke="#4f5bd5" stroke-width="2"/>
+<text x="1208" y="593" text-anchor="end" font-size="12" font-weight="600" fill="#4f5bd5" letter-spacing="0.5">HITL</text>
+<text x="1034" y="435" font-size="18" font-weight="700" fill="#2f3a9e">Maker-checker</text>
+<text x="1034" y="461" font-size="14" fill="#1f2937">Analyst submits</text>
+<text x="1034" y="482" font-size="14" fill="#1f2937">Compliance approves</text>
+<text x="1034" y="503" font-size="14" fill="#1f2937">Untick false positives,</text>
+<text x="1034" y="524" font-size="14" fill="#1f2937">add missed terms,</text>
+<text x="1034" y="545" font-size="14" fill="#1f2937">bulk approve</text>
+<text x="1034" y="566" font-size="14" fill="#1f2937">Shared review queue</text>
+<rect x="1245" y="405" width="425" height="200" rx="12" fill="#fff3e6" stroke="#e07b12" stroke-width="2"/>
+<text x="1658" y="593" text-anchor="end" font-size="12" font-weight="600" fill="#e07b12" letter-spacing="0.5">DATA PROTECTION</text>
+<text x="1259" y="435" font-size="18" font-weight="700" fill="#9a4f00">Format handlers &amp; redaction</text>
+<text x="1259" y="461" font-size="14" fill="#1f2937" font-weight="600">Word, PowerPoint (run-level), Excel (cell-level)</text>
+<text x="1259" y="482" font-size="14" fill="#1f2937" font-weight="600">PDF true redaction (PyMuPDF), Email (.eml)</text>
+<text x="1259" y="503" font-size="14" fill="#1f2937">Styles: [PERSON_1] labels | blackout | [REDACTED]</text>
+<text x="1259" y="524" font-size="14" fill="#1f2937">Metadata scrub, mailto links neutralised</text>
+<text x="1259" y="545" font-size="14" fill="#1f2937">Post-redaction verification (residual check)</text>
+<text x="1259" y="566" font-size="14" fill="#1f2937">Prompt-injection screening of document text</text>
+<path d="M 670 368 L 670 402" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M 895 368 L 895 402" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M 1120 368 L 1120 402" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M 1345 368 L 1345 402" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
+<rect x="320" y="660" width="675" height="190" rx="12" fill="#e8f3ff" stroke="#2f7dd1" stroke-width="2"/>
+<text x="983" y="838" text-anchor="end" font-size="12" font-weight="600" fill="#2f7dd1" letter-spacing="0.5">RETRIEVAL</text>
+<text x="334" y="690" font-size="18" font-weight="700" fill="#1b528f">Hybrid RAG - privacy policy knowledge base</text>
+<text x="334" y="716" font-size="14" fill="#1f2937" font-weight="600">Policies (markdown): PI tiers, redaction standard, GDPR / DPDP / CCPA / HIPAA</text>
+<text x="334" y="737" font-size="14" fill="#1f2937">Embeddings: azure/genailab-maas-text-embedding-3-large</text>
+<text x="334" y="758" font-size="14" fill="#1f2937">Vector DB: ChromaDB (in-memory)  +  BM25 keyword index</text>
+<text x="334" y="779" font-size="14" fill="#1f2937">Reciprocal-rank fusion  -&gt;  Cross-encoder re-ranking (ms-marco-MiniLM)</text>
+<text x="334" y="800" font-size="14" fill="#1f2937">Grounds the LLM review agent and the policy assistant</text>
+<rect x="1020" y="660" width="425" height="190" rx="12" fill="#ffeef0" stroke="#d6455d" stroke-width="2"/>
+<text x="1433" y="838" text-anchor="end" font-size="12" font-weight="600" fill="#d6455d" letter-spacing="0.5">SAFETY</text>
+<text x="1034" y="690" font-size="18" font-weight="700" fill="#99223a">NeMo Guardrails + Policy assistant</text>
+<text x="1034" y="716" font-size="14" fill="#1f2937">Input rail: self-check (jailbreak / PI requests)</text>
+<text x="1034" y="737" font-size="14" fill="#1f2937">Output rail: self-check + Presidio PI masking</text>
+<text x="1034" y="758" font-size="14" fill="#1f2937">Heuristic prompt-injection blocking</text>
+<text x="1034" y="779" font-size="14" fill="#1f2937">Grounded answers with cited policy sections</text>
+<rect x="1470" y="660" width="230" height="190" rx="12" fill="#fdf8e4" stroke="#b8930b" stroke-width="2"/>
+<text x="1688" y="838" text-anchor="end" font-size="12" font-weight="600" fill="#b8930b" letter-spacing="0.5">QUALITY</text>
+<text x="1484" y="690" font-size="18" font-weight="700" fill="#7a6107">Evaluation</text>
+<text x="1484" y="716" font-size="14" fill="#1f2937">RAGAS: faithfulness,</text>
+<text x="1484" y="737" font-size="14" fill="#1f2937">relevancy, context</text>
+<text x="1484" y="758" font-size="14" fill="#1f2937">precision / recall</text>
+<text x="1484" y="779" font-size="14" fill="#1f2937">Detection P / R / F1</text>
+<text x="1484" y="800" font-size="14" fill="#1f2937">pytest (19 tests)</text>
+<path d="M 895 658 L 895 609" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="902" y="642" text-anchor="start" font-size="13" font-style="italic" fill="#475569">policy context</text>
+<path d="M 995 755 L 1017 755" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 1080 658 L 1080 625 L 960 625 L 960 609" fill="none" stroke="#475569" stroke-width="2.2" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+<text x="1088" y="645" font-size="13" font-style="italic" fill="#475569">assistant LLM calls</text>
+<rect x="1730" y="110" width="250" height="170" rx="12" fill="#eaf7ec" stroke="#2e9e4f" stroke-width="2"/>
+<text x="1968" y="268" text-anchor="end" font-size="12" font-weight="600" fill="#2e9e4f" letter-spacing="0.5">OUTPUT</text>
+<text x="1744" y="140" font-size="18" font-weight="700" fill="#1d6b34">Redacted documents</text>
+<text x="1744" y="166" font-size="14" fill="#1f2937">Same format as input</text>
+<text x="1744" y="187" font-size="14" fill="#1f2937">Layout &amp; readability kept</text>
+<text x="1744" y="208" font-size="14" fill="#1f2937">Single files or .zip</text>
+<text x="1744" y="229" font-size="14" fill="#1f2937">No PI under PDF boxes</text>
+<rect x="1730" y="305" width="250" height="150" rx="12" fill="#eaf7ec" stroke="#2e9e4f" stroke-width="2"/>
+<text x="1968" y="443" text-anchor="end" font-size="12" font-weight="600" fill="#2e9e4f" letter-spacing="0.5">OUTPUT</text>
+<text x="1744" y="335" font-size="18" font-weight="700" fill="#1d6b34">Summary reports</text>
+<text x="1744" y="361" font-size="14" fill="#1f2937">Markdown / CSV / JSON</text>
+<text x="1744" y="382" font-size="14" fill="#1f2937">Counts by category &amp; file</text>
+<text x="1744" y="403" font-size="14" fill="#1f2937">Fingerprints only - no raw PI</text>
+<rect x="1730" y="480" width="250" height="200" rx="12" fill="#ffeef0" stroke="#d6455d" stroke-width="2"/>
+<text x="1968" y="668" text-anchor="end" font-size="12" font-weight="600" fill="#d6455d" letter-spacing="0.5">OBSERVABILITY</text>
+<text x="1744" y="510" font-size="18" font-weight="700" fill="#99223a">Audit trail</text>
+<text x="1744" y="536" font-size="14" fill="#1f2937" font-weight="600">Python logging (JSON lines)</text>
+<text x="1744" y="557" font-size="14" fill="#1f2937">Login, scan, submit, approve,</text>
+<text x="1744" y="578" font-size="14" fill="#1f2937">redact, purge, export events</text>
+<text x="1744" y="599" font-size="14" fill="#1f2937">HMAC fingerprints, no raw PI</text>
+<text x="1744" y="620" font-size="14" fill="#1f2937" font-weight="600">Compliance Officer only</text>
+<rect x="1730" y="705" width="250" height="145" rx="12" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+<text x="1968" y="838" text-anchor="end" font-size="12" font-weight="600" fill="#64748b" letter-spacing="0.5">INTEGRATION</text>
+<text x="1744" y="735" font-size="18" font-weight="700" fill="#334155">Microsoft 365</text>
+<text x="1744" y="761" font-size="14" fill="#1f2937">Upload redacted files</text>
+<text x="1744" y="782" font-size="14" fill="#1f2937">back to /Redacted folder</text>
+<text x="1744" y="803" font-size="14" fill="#1f2937">(Graph API)</text>
+<path d="M 292 235 L 317 151" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 292 505 L 342 314" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 1010 194 L 1010 217" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="1018" y="210" text-anchor="start" font-size="13" font-style="italic" fill="#475569">start / resume</text>
+<path d="M 1672 300 L 1727 200" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 1672 330 L 1727 380" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<path d="M 1700 560 L 1727 560" fill="none" stroke="#475569" stroke-width="2.2" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+<text x="1715" y="548" text-anchor="middle" font-size="12" font-style="italic" fill="#475569">events</text>
+<path d="M 1855 283 L 1855 302" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#ah)"/>
+<rect x="30" y="900" width="22" height="16" rx="4" fill="#eef0ff" stroke="#4f5bd5" stroke-width="2"/>
+<text x="60" y="913" font-size="14" fill="#334155">UI / access</text>
+<rect x="161.6" y="900" width="22" height="16" rx="4" fill="#e6f6f4" stroke="#0f8b7d" stroke-width="2"/>
+<text x="191.6" y="913" font-size="14" fill="#334155">LangGraph node</text>
+<rect x="316.0" y="900" width="22" height="16" rx="4" fill="#fff3e6" stroke="#e07b12" stroke-width="2"/>
+<text x="346.0" y="913" font-size="14" fill="#334155">Data protection (Presidio)</text>
+<rect x="561.6" y="900" width="22" height="16" rx="4" fill="#f4ecff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="591.6" y="913" font-size="14" fill="#334155">LLM (Azure GenAI Lab)</text>
+<rect x="769.2" y="900" width="22" height="16" rx="4" fill="#e8f3ff" stroke="#2f7dd1" stroke-width="2"/>
+<text x="799.2" y="913" font-size="14" fill="#334155">Retrieval</text>
+<rect x="885.6" y="900" width="22" height="16" rx="4" fill="#ffeef0" stroke="#d6455d" stroke-width="2"/>
+<text x="915.6" y="913" font-size="14" fill="#334155">Safety / audit</text>
+<rect x="1040.0" y="900" width="22" height="16" rx="4" fill="#eaf7ec" stroke="#2e9e4f" stroke-width="2"/>
+<text x="1070.0" y="913" font-size="14" fill="#334155">Outputs</text>
+<rect x="1141.2" y="900" width="22" height="16" rx="4" fill="#fdf8e4" stroke="#b8930b" stroke-width="2"/>
+<text x="1171.2" y="913" font-size="14" fill="#334155">Evaluation</text>
+<text x="30" y="950" font-size="14" fill="#64748b">Stack: LangGraph | Azure GenAI Lab gpt-4o-mini + text-embedding-3-large | ChromaDB | BM25 + semantic + cross-encoder | Microsoft Presidio | NeMo Guardrails | RAGAS | Python logging | Streamlit</text></svg>
