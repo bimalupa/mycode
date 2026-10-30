@@ -65,11 +65,18 @@ class Guard:
             audit("guardrail_block", stage="input", engine="heuristic")
             return REFUSAL
         if self.rails is not None:
-            result = self.rails.generate(messages=[{"role": "user", "content": prompt}])
-            content = result["content"] if isinstance(result, dict) else str(result)
-            if content.strip().lower().startswith("i'm sorry, i can't respond"):
-                audit("guardrail_block", stage="rails", engine="nemo")
-                return REFUSAL
-            return content
+            try:
+                result = self.rails.generate(messages=[{"role": "user", "content": prompt}])
+                content = result["content"] if isinstance(result, dict) else str(result)
+                if content.strip().lower().startswith("i'm sorry, i can't respond"):
+                    audit("guardrail_block", stage="rails", engine="nemo")
+                    return REFUSAL
+                return content
+            except Exception as exc:
+                # NeMo wraps provider errors (TLS, proxy, recursion) in its own exception; keep the app usable
+                # with the built-in guard (injection screen + PI masking) and record why.
+                log.warning("NeMo Guardrails call failed (%s: %s); using built-in guard for this answer",
+                            type(exc).__name__, str(exc)[:300])
+                audit("guardrail_fallback", error=type(exc).__name__)
         answer = self.llm.invoke(prompt).content
         return self.mask_pii(answer)

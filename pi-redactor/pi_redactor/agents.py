@@ -175,6 +175,17 @@ class PolicyAssistant:
             return {"answer": "LLM not configured - showing the most relevant policy excerpts only.",
                     "contexts": contexts, "sources": chunks}
         prompt = ASSISTANT_PROMPT.format(context=format_context(chunks), question=question)
-        answer = self.guard.ask(prompt, question)
+        try:
+            answer = self.guard.ask(prompt, question)
+        except Exception as exc:
+            root = exc
+            while root.__cause__ is not None:
+                root = root.__cause__
+            log.warning("Policy assistant LLM call failed: %s (root cause: %s: %s)",
+                        type(exc).__name__, type(root).__name__, str(root)[:300])
+            audit("policy_question_failed", error=type(exc).__name__, root=type(root).__name__)
+            return {"answer": f"The language model could not be reached ({type(root).__name__}). Showing the most "
+                              "relevant policy excerpts below. Run `python scripts/check_llm.py` to diagnose.",
+                    "contexts": contexts, "sources": chunks}
         audit("policy_question", engine=self.guard.engine, chunks=len(chunks))
         return {"answer": answer, "contexts": contexts, "sources": chunks}
