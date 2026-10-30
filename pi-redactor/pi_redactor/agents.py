@@ -117,7 +117,11 @@ class ReviewAgent:
             try:
                 result = _parse_json(self.llm.invoke(prompt).content)
             except Exception as exc:
-                log.warning("LLM review call failed: %s", exc)
+                root = exc
+                while root.__cause__ is not None:
+                    root = root.__cause__
+                log.warning("LLM review call failed: %s (root cause: %s: %s). Check GENAI_BASE_URL, and set "
+                            "GENAI_VERIFY_SSL=false if this is a certificate error.", exc, type(root).__name__, root)
                 notes.append(f"LLM review call failed ({type(exc).__name__}); Presidio results kept.")
                 continue
             for v in result.get("verdicts", []):

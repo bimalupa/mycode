@@ -37,8 +37,20 @@ def _use_offline_suffix_list() -> None:
     """Presidio's email validator (tldextract) downloads the public suffix list at first use; behind
     corporate proxies that fails with a traceback. The bundled snapshot is sufficient, so skip the download."""
     try:
+        import tldextract
         import tldextract.tldextract as tx
-        tx.TLD_EXTRACTOR.suffix_list_urls = ()
+
+        original_init = tx.TLDExtract.__init__
+        if not getattr(original_init, "_offline", False):
+            def offline_init(self, *args, **kwargs):
+                kwargs["suffix_list_urls"] = ()
+                kwargs.setdefault("fallback_to_snapshot", True)
+                original_init(self, *args, **kwargs)
+            offline_init._offline = True
+            tx.TLDExtract.__init__ = offline_init
+        for extractor in {getattr(tx, "TLD_EXTRACTOR", None), getattr(tldextract, "TLD_EXTRACTOR", None)}:
+            if extractor is not None:
+                extractor.suffix_list_urls = ()
     except Exception as exc:
         log.debug("tldextract offline mode not applied: %s", exc)
 
