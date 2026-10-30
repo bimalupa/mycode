@@ -83,6 +83,7 @@ class RedactionPipeline:
             dets.extend(find_occurrences(state["segments"], item["text"], item.get("entity_type", "MANUAL"),
                                          "manual", "Added by reviewer"))
         audit("review_decision", doc_id=state["doc_id"], reviewer=decision.get("reviewer", "unknown"),
+              reviewer_role=decision.get("role", ""), prepared_by=decision.get("prepared_by", ""),
               approved=sum(d.approved for d in dets), rejected=sum(not d.approved for d in dets),
               manual_terms=len(decision.get("manual", [])),
               approved_fingerprints=[fingerprint(d.text) for d in dets if d.approved][:200])
@@ -142,8 +143,9 @@ class RedactionPipeline:
         return self.state(doc_id)
 
     def approve(self, doc_id: str, approvals: dict[str, bool], manual: list[dict],
-                reviewer: str = "unknown") -> PipelineState:
-        self.graph.invoke(Command(resume={"approvals": approvals, "manual": manual, "reviewer": reviewer}),
+                reviewer: str = "unknown", role: str = "", prepared_by: str = "") -> PipelineState:
+        self.graph.invoke(Command(resume={"approvals": approvals, "manual": manual, "reviewer": reviewer,
+                                          "role": role, "prepared_by": prepared_by}),
                           self._cfg(doc_id))
         return self.state(doc_id)
 

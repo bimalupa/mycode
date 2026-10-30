@@ -1,0 +1,14 @@
+{
+  "analyst": {
+    "name": "Asha (Analyst)",
+    "role": "analyst",
+    "password": "pbkdf2_sha256$200000$a1936b9081ece04a3d039c6165ab60e1$19cc609073fbc6aaf0dee04b4d8b834813c6a812eb359295a3ff99a02c7dd394",
+    "active": true
+  },
+  "compliance": {
+    "name": "Ravi (Compliance Officer)",
+    "role": "compliance_officer",
+    "password": "pbkdf2_sha256$200000$075f680fc117320cc08caebcf67911e2$92f4fefeb44a1b8b403fbfa14daa2f8790ca2c7092abc4d2a60e94c4892d8bd3",
+    "active": true
+  }
+}

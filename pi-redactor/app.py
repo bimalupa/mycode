@@ -1,6 +1,8 @@
 """Streamlit UI - AI-Powered Sensitive Personal Information Detection and Redaction Utility."""
 import html
 import io
+import threading
+import time
 import uuid
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -12,6 +14,7 @@ import streamlit as st
 from pi_redactor import formats
 from pi_redactor.agents import PolicyAssistant, ReviewAgent
 from pi_redactor.audit import audit, read_audit
+from pi_redactor.auth import ROLES, authenticate, can, locked_for, session_expired
 from pi_redactor.config import settings
 from pi_redactor.detection import DEFAULT_ENTITIES, ENTITY_CATALOG, PIDetector
 from pi_redactor.graph import RedactionPipeline
@@ -41,10 +44,16 @@ def load_engine():
     return detector, pipeline, PolicyAssistant(retriever, guard), guard, retriever
 
 
+@st.cache_resource
+def shared_workspace():
+    """Document queue shared by all signed-in users, so an analyst can hand work to a compliance officer."""
+    return {"docs": {}, "approvals": {}, "lock": threading.Lock()}
+
+
 detector, pipeline, assistant, guard, retriever = load_engine()
+WS = shared_workspace()
+DOCS, APPROVALS = WS["docs"], WS["approvals"]
 ss = st.session_state
-ss.setdefault("docs", {})
-ss.setdefault("approvals", {})
 ss.setdefault("editor_ver", {})
 ss.setdefault("chat", [])
 ss.setdefault("m365_files", [])
@@ -53,8 +62,8 @@ ss.setdefault("m365_files", [])
 def purge(doc_ids):
     for doc_id in list(doc_ids):
         pipeline.purge(doc_id)
-        ss.docs.pop(doc_id, None)
-        ss.approvals.pop(doc_id, None)
+        DOCS.pop(doc_id, None)
+        APPROVALS.pop(doc_id, None)
 
 
 def redacted_name(name: str) -> str:
@@ -80,10 +89,48 @@ def highlight(text: str, dets, approvals: dict) -> str:
     return "".join(parts).replace("\n", "<br>")
 
 
+# ---------------- login ----------------
+def login_page(message: str = ""):
+    _, mid, _ = st.columns([1, 1.2, 1])
+    with mid:
+        st.title("🛡️ PI Redaction Utility")
+        st.caption("Sign in to continue")
+        if message:
+            st.warning(message)
+        with st.form("login"):
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+            if st.form_submit_button("Sign in", type="primary", use_container_width=True):
+                wait = locked_for(username.strip().lower())
+                if wait:
+                    st.error(f"Account locked after repeated failed attempts. Try again in {wait // 60 + 1} min.")
+                elif (signed_in := authenticate(username, password)) is not None:
+                    ss.user = signed_in
+                    st.rerun()
+                else:
+                    st.error("Invalid username or password.")
+    st.stop()
+
+
+user = ss.get("user")
+if user and session_expired(user):
+    audit("session_timeout", user=user["username"])
+    ss.clear()
+    login_page("Your session expired after inactivity. Please sign in again.")
+if not user:
+    login_page()
+user["last_active"] = time.time()
+reviewer, role = user["username"], user["role"]
+is_officer = can(user, "approve")
+
 # ---------------- sidebar ----------------
 with st.sidebar:
     st.title("🛡️ PI Redaction Utility")
-    reviewer = st.text_input("Reviewer", value="compliance.officer")
+    st.markdown(f"👤 **{user['name']}**  \n`{ROLES[role]}`")
+    if st.button("Log out", use_container_width=True):
+        audit("logout", user=reviewer)
+        ss.clear()
+        st.rerun()
     entities = st.multiselect("PI categories", list(ENTITY_CATALOG), default=DEFAULT_ENTITIES,
                               format_func=lambda e: f"{e} - {ENTITY_CATALOG[e]}")
     keywords = [k.strip() for k in st.text_area("Custom sensitive keywords (one per line)",
@@ -101,16 +148,21 @@ with st.sidebar:
     st.caption(f"Safety layer: {guard.engine}")
     st.caption("Retrieval: BM25" + (" + semantic (ChromaDB)" if retriever.collection else "")
                + (" + cross-encoder" if retriever.reranker else ""))
-    if st.button("🧹 Purge all session data", use_container_width=True):
-        purge(ss.docs.keys())
+    if can(user, "purge") and st.button("🧹 Purge all processed documents", use_container_width=True):
+        purge(DOCS.keys())
         ss.chat = []
+        audit("purge_all", user=reviewer)
         st.success("All in-memory documents and state purged.")
 
 options = RedactionOptions(entities=entities, min_score=min_score, auto_approve_score=auto_score,
                            custom_keywords=keywords, style=style, use_llm=use_llm)
 
-tab_scan, tab_review, tab_results, tab_chat, tab_audit = st.tabs(
-    ["1 · Select & scan", "2 · Review & approve", "3 · Results & report", "4 · Policy assistant", "5 · Audit trail"])
+tab_names = ["1 · Select & scan", "2 · Review & approve", "3 · Results & report", "4 · Policy assistant"]
+if can(user, "audit"):
+    tab_names.append("5 · Audit trail")
+tabs = st.tabs(tab_names)
+tab_scan, tab_review, tab_results, tab_chat = tabs[:4]
+tab_audit = tabs[4] if len(tabs) > 4 else None
 
 # ---------------- 1. select & scan ----------------
 with tab_scan:
@@ -160,23 +212,26 @@ with tab_scan:
         with ThreadPoolExecutor(max_workers=4) as pool:
             for name, load, meta in loaders:
                 doc_id = uuid.uuid4().hex[:12]
-                ss.docs[doc_id] = {"name": name, "status": "scanning", **meta}
+                DOCS[doc_id] = {"name": name, "status": "scanning", "scanned_by": reviewer, **meta}
                 jobs[pool.submit(lambda n=name, l=load, d=doc_id: pipeline.start(d, n, l(), options))] = doc_id
             for i, fut in enumerate(as_completed(jobs), start=1):
                 doc_id = jobs[fut]
                 try:
                     fut.result()
-                    ss.docs[doc_id]["status"] = "review"
+                    DOCS[doc_id]["status"] = "review"
                 except Exception as exc:
-                    ss.docs[doc_id].update(status="error", error=f"{type(exc).__name__}: {exc}")
+                    DOCS[doc_id].update(status="error", error=f"{type(exc).__name__}: {exc}")
                 progress.progress(i / len(jobs), text=f"Scanned {i}/{len(jobs)}")
+        audit("documents_scanned", user=reviewer, role=role, documents=len(jobs))
         st.success("Scan complete - continue in **2 · Review & approve**.")
 
-    if ss.docs:
+    if DOCS:
         rows = []
-        for doc_id, d in ss.docs.items():
+        for doc_id, d in DOCS.items():
             n = len(pipeline.state(doc_id).get("detections", [])) if d["status"] != "error" else 0
-            rows.append({"File": d["name"], "Status": d["status"], "PI found": n, "Error": d.get("error", "")})
+            rows.append({"File": d["name"], "Status": d["status"], "PI found": n,
+                         "Scanned by": d.get("scanned_by", ""), "Submitted by": d.get("submitted_by", ""),
+                         "Approved by": d.get("approved_by", ""), "Error": d.get("error", "")})
         st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
     with st.expander("How it works (LangGraph pipeline)"):
@@ -187,14 +242,19 @@ with tab_scan:
 
 # ---------------- 2. review ----------------
 with tab_review:
-    pending = [i for i, d in ss.docs.items() if d["status"] == "review"]
+    pending = [i for i, d in DOCS.items() if d["status"] in ("review", "submitted")]
     if not pending:
         st.info("No documents waiting for review. Scan files in step 1.")
     else:
-        doc_id = st.selectbox("Document", pending, format_func=lambda i: ss.docs[i]["name"])
+        doc_id = st.selectbox("Document", pending, format_func=lambda i: f"{DOCS[i]['name']}"
+                              + ("  -  submitted for approval" if DOCS[i]["status"] == "submitted" else ""))
+        if DOCS[doc_id]["status"] == "submitted":
+            st.info(f"Submitted for approval by **{DOCS[doc_id]['submitted_by']}**. "
+                    + ("Check the selections below, then approve." if is_officer
+                       else "Waiting for a Compliance Officer."), icon="📨")
         state = pipeline.state(doc_id)
         dets, segments = state["detections"], state["segments"]
-        approvals = ss.approvals.setdefault(doc_id, {d.id: d.approved for d in dets})
+        approvals = APPROVALS.setdefault(doc_id, {d.id: d.approved for d in dets})
         ver = ss.editor_ver.setdefault(doc_id, 0)
 
         for note in state.get("notes", []):
@@ -208,7 +268,7 @@ with tab_review:
         b = st.columns(4)
 
         def bulk(fn):
-            ss.approvals[doc_id] = {d.id: fn(d) for d in dets}
+            APPROVALS[doc_id] = {d.id: fn(d) for d in dets}
             ss.editor_ver[doc_id] = ver + 1
             st.rerun()
 
@@ -239,7 +299,7 @@ with tab_review:
                                    "Confidence": st.column_config.ProgressColumn(min_value=0, max_value=1,
                                                                                  format="%.2f")},
                     disabled=[c for c in df.columns if c != "Redact"])
-                ss.approvals[doc_id] = approvals = {str(k): bool(v) for k, v in zip(edited["id"], edited["Redact"])}
+                APPROVALS[doc_id] = approvals = {str(k): bool(v) for k, v in zip(edited["id"], edited["Redact"])}
         with left:
             show_all = st.toggle("Show full document text", value=False)
             by_seg = {}
@@ -252,29 +312,54 @@ with tab_review:
             with st.container(height=520, border=True):
                 st.markdown(body or "_Nothing to show_", unsafe_allow_html=True)
 
-        manual_text = st.text_area("Missed something? Add exact text to redact (one per line)", key=f"manual_{doc_id}")
+        manual_text = st.text_area("Missed something? Add exact text to redact (one per line)",
+                                   value=DOCS[doc_id].get("manual_text", ""), key=f"manual_{doc_id}")
         manual = [{"text": t.strip(), "entity_type": "MANUAL"} for t in manual_text.splitlines() if t.strip()]
 
+        def finalize(pid: str, manual_terms: list[dict]) -> None:
+            with WS["lock"]:
+                if DOCS.get(pid, {}).get("status") not in ("review", "submitted"):
+                    return  # already approved in another session
+                DOCS[pid]["status"] = "approving"
+            previous = "submitted" if DOCS[pid].get("submitted_by") else "review"
+            try:
+                pipeline.approve(pid, APPROVALS.get(pid, {}), manual_terms, reviewer, role,
+                                 DOCS[pid].get("submitted_by", DOCS[pid].get("scanned_by", "")))
+            except Exception as exc:
+                DOCS[pid]["status"] = previous
+                st.error(f"Redaction failed for {DOCS[pid]['name']}: {type(exc).__name__}: {exc}")
+                return
+            DOCS[pid].update(status="done", approved_by=reviewer)
+
         c1, c2 = st.columns(2)
-        if c1.button("✅ Approve & redact this document", type="primary", use_container_width=True):
-            with st.spinner("Redacting and verifying..."):
-                pipeline.approve(doc_id, ss.approvals[doc_id], manual, reviewer)
-            ss.docs[doc_id]["status"] = "done"
-            st.rerun()
-        if len(pending) > 1 and c2.button(f"⚡ Approve & redact all {len(pending)} pending documents",
-                                          use_container_width=True,
-                                          help="Uses your selections where you reviewed a document, "
-                                               "otherwise the AI recommendation."):
-            with st.spinner("Bulk redaction..."):
-                for pid in pending:
-                    pipeline.approve(pid, ss.approvals.get(pid, {}), manual if pid == doc_id else [], reviewer)
-                    ss.docs[pid]["status"] = "done"
-            audit("bulk_approval", reviewer=reviewer, documents=len(pending))
-            st.rerun()
+        if is_officer:
+            if c1.button("✅ Approve & redact this document", type="primary", use_container_width=True):
+                with st.spinner("Redacting and verifying..."):
+                    finalize(doc_id, manual)
+                st.rerun()
+            if len(pending) > 1 and c2.button(f"⚡ Approve & redact all {len(pending)} pending documents",
+                                              use_container_width=True,
+                                              help="Uses saved selections where a document was reviewed, "
+                                                   "otherwise the AI recommendation."):
+                with st.spinner("Bulk redaction..."):
+                    for pid in pending:
+                        terms = manual if pid == doc_id else [
+                            {"text": t, "entity_type": "MANUAL"} for t in DOCS[pid].get("manual_text", "").splitlines()
+                            if t.strip()]
+                        finalize(pid, terms)
+                audit("bulk_approval", user=reviewer, role=role, documents=len(pending))
+                st.rerun()
+        else:
+            if c1.button("📨 Submit for compliance approval", type="primary", use_container_width=True):
+                DOCS[doc_id].update(status="submitted", submitted_by=reviewer, manual_text=manual_text)
+                audit("submitted_for_approval", doc_id=doc_id, user=reviewer, role=role,
+                      selected=sum(APPROVALS[doc_id].values()), manual_terms=len(manual))
+                st.rerun()
+            c2.caption("🔒 Only a Compliance Officer can approve permanent redaction.")
 
 # ---------------- 3. results ----------------
 with tab_results:
-    done = [i for i, d in ss.docs.items() if d["status"] == "done"]
+    done = [i for i, d in DOCS.items() if d["status"] == "done"]
     if not done:
         st.info("Redacted documents will appear here after approval.")
     else:
@@ -321,19 +406,19 @@ with tab_results:
             cols[n % len(cols)].download_button(f"⬇️ {redacted_name(s['file_name'])}", s["redacted_bytes"],
                                                 redacted_name(s["file_name"]), key=f"dl_{i}")
 
-        m365_done = [i for i in done if ss.docs[i].get("source") == "m365"]
+        m365_done = [i for i in done if DOCS[i].get("source") == "m365"]
         if m365_done and st.button(f"☁️ Upload {len(m365_done)} redacted file(s) back to Microsoft 365 (/Redacted)"):
             from pi_redactor.m365 import GraphClient
             client = GraphClient()
             for i in m365_done:
-                meta = ss.docs[i]
+                meta = DOCS[i]
                 url = client.upload(meta["drive_id"], f"{meta['folder'].rstrip('/')}/Redacted",
                                     redacted_name(meta["name"]), states[i]["redacted_bytes"])
                 audit("m365_upload", doc_id=i)
                 st.success(f"Uploaded {redacted_name(meta['name'])} {url}")
 
         st.markdown("#### Before / after")
-        pick = st.selectbox("Compare", done, format_func=lambda i: ss.docs[i]["name"])
+        pick = st.selectbox("Compare", done, format_func=lambda i: DOCS[i]["name"])
         s = states[pick]
         after = {seg.id: seg.text for seg in formats.extract(s["file_name"], s["redacted_bytes"])}
         by_seg = {}
@@ -352,8 +437,9 @@ with tab_results:
         for note in s["report"]["notes"]:
             st.caption(f"Note: {note}")
 
-        if st.button("🧹 Purge processed documents from memory"):
+        if can(user, "purge") and st.button("🧹 Purge processed documents from memory"):
             purge(done)
+            audit("purge_processed", user=reviewer, documents=len(done))
             st.rerun()
 
 # ---------------- 4. policy assistant ----------------
@@ -385,13 +471,33 @@ with tab_chat:
                     st.caption(c.text[:600])
         ss.chat.append({"role": "assistant", "content": res["answer"]})
 
-# ---------------- 5. audit ----------------
-with tab_audit:
-    st.subheader("Audit trail")
-    st.caption(f"JSON-lines log at `{settings.audit_log}`. Values are HMAC fingerprints - no raw PI is logged.")
-    entries = read_audit()
-    if entries:
-        st.dataframe(pd.DataFrame(entries[::-1]), hide_index=True, use_container_width=True, height=500)
-        st.download_button("Download audit log", settings.audit_log.read_bytes(), "audit.jsonl")
-    else:
-        st.info("No audit events yet.")
+# ---------------- 5. audit (Compliance Officer only) ----------------
+if tab_audit is not None and can(user, "audit"):
+    with tab_audit:
+        st.subheader("Audit trail")
+        st.caption(f"JSON-lines log at `{settings.audit_log}`. Values are HMAC fingerprints - no raw PI is logged. "
+                   "Visible to Compliance Officers only.")
+        entries = read_audit()
+        if entries:
+            df = pd.DataFrame(entries[::-1])
+            f1, f2, f3 = st.columns(3)
+            ev = f1.multiselect("Event", sorted(df["event"].unique()))
+            who_cols = [c for c in ("user", "reviewer") if c in df.columns]
+            people = sorted({str(v) for c in who_cols for v in df[c].dropna().unique()})
+            person = f2.multiselect("User", people)
+            doc = f3.text_input("Document ID contains")
+            if ev:
+                df = df[df["event"].isin(ev)]
+            if person:
+                df = df[df[who_cols].astype(str).isin(person).any(axis=1)]
+            if doc and "doc_id" in df.columns:
+                df = df[df["doc_id"].astype(str).str.contains(doc, na=False)]
+            df = df.dropna(axis=1, how="all")
+            st.dataframe(df, hide_index=True, use_container_width=True, height=480)
+            d1, d2 = st.columns(2)
+            d1.download_button("Download audit report (.csv)", df.to_csv(index=False), "audit_report.csv",
+                               on_click=lambda: audit("audit_exported", user=reviewer, format="csv"))
+            d2.download_button("Download full audit log (.jsonl)", settings.audit_log.read_bytes(), "audit.jsonl",
+                               on_click=lambda: audit("audit_exported", user=reviewer, format="jsonl"))
+        else:
+            st.info("No audit events yet.")
