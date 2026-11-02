@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#475569"/></marker><marker id="ahs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#475569"/></marker></defs><rect width="1920" height="1080" fill="#FFFFFF"/><text x="60" y="66" font-size="42" font-weight="800" fill="#101820">AI-Powered Personal Information Detection &amp; Redaction</text>
+<text x="60" y="102" font-size="21" font-weight="400" fill="#52606D" text-anchor="start" letter-spacing="0">How a document moves through the solution, and what supports each step</text>
+<rect x="110" y="140" width="360" height="100" rx="14" fill="#E9ECFF" stroke="#4F5BD5" stroke-width="2.4"/>
+<text x="128" y="174" font-size="22" font-weight="700" fill="#2F3A9E">People</text>
+<text x="128" y="202" font-size="16" fill="#101820">Analyst  ·  Compliance Officer</text>
+<text x="128" y="225" font-size="16" fill="#101820">Login, roles, lockout</text>
+<rect x="530" y="140" width="860" height="100" rx="14" fill="#E9ECFF" stroke="#4F5BD5" stroke-width="2.4"/>
+<text x="548" y="174" font-size="22" font-weight="700" fill="#2F3A9E">Streamlit web app</text>
+<text x="548" y="202" font-size="16" fill="#101820">Select &amp; scan  ·  Review &amp; approve  ·  Results &amp; reports  ·  Policy assistant  ·  Audit trail</text>
+<rect x="1450" y="140" width="360" height="100" rx="14" fill="#EEF1F5" stroke="#64748B" stroke-width="2.4"/>
+<text x="1468" y="174" font-size="22" font-weight="700" fill="#334155">Documents in</text>
+<text x="1468" y="202" font-size="15" fill="#101820">Upload · Local folder</text>
+<text x="1468" y="224" font-size="15" fill="#101820">Microsoft 365 (OneDrive, SharePoint)</text>
+<line x1="472" y1="190" x2="526" y2="190" stroke="#475569" stroke-width="2.6" marker-end="url(#ah)"/>
+<line x1="1448" y1="190" x2="1394" y2="190" stroke="#475569" stroke-width="2.6" marker-end="url(#ah)"/>
+<line x1="960" y1="242" x2="960" y2="276" stroke="#475569" stroke-width="2.6" marker-end="url(#ah)"/>
+<rect x="60" y="280" width="1800" height="200" rx="18" fill="#F0FAF8" stroke="#0F8B7D" stroke-width="2.4" stroke-dasharray="10 7"/>
+<text x="86" y="308" font-size="15" font-weight="600" fill="#0B5F56" text-anchor="start" letter-spacing="1.4">LANGGRAPH PIPELINE  ·  PROCESSED IN MEMORY ONLY, NOTHING WRITTEN TO DISK</text>
+<rect x="110" y="318" width="260" height="140" rx="14" fill="#FFFFFF" stroke="#0F8B7D" stroke-width="2.6"/>
+<circle cx="144" cy="354" r="18" fill="#0F8B7D"/>
+<text x="144" y="361" font-size="20" font-weight="800" fill="#FFFFFF" text-anchor="middle">1</text>
+<text x="174" y="361" font-size="23" font-weight="700" fill="#0B5F56">Extract</text>
+<text x="130" y="402" font-size="17" fill="#101820">Read the file into</text>
+<text x="130" y="426" font-size="17" fill="#101820">text pieces</text>
+<line x1="373" y1="388" x2="395" y2="388" stroke="#0F8B7D" stroke-width="2.6" marker-end="url(#ah)"/>
+<rect x="398" y="318" width="260" height="140" rx="14" fill="#FFFFFF" stroke="#0F8B7D" stroke-width="2.6"/>
+<circle cx="432" cy="354" r="18" fill="#0F8B7D"/>
+<text x="432" y="361" font-size="20" font-weight="800" fill="#FFFFFF" text-anchor="middle">2</text>
+<text x="462" y="361" font-size="23" font-weight="700" fill="#0B5F56">Detect</text>
+<text x="418" y="402" font-size="17" fill="#101820">Find names, IDs,</text>
+<text x="418" y="426" font-size="17" fill="#101820">contacts, cards</text>
+<line x1="661" y1="388" x2="683" y2="388" stroke="#0F8B7D" stroke-width="2.6" marker-end="url(#ah)"/>
+<rect x="686" y="318" width="260" height="140" rx="14" fill="#FFFFFF" stroke="#0F8B7D" stroke-width="2.6"/>
+<circle cx="720" cy="354" r="18" fill="#0F8B7D"/>
+<text x="720" y="361" font-size="20" font-weight="800" fill="#FFFFFF" text-anchor="middle">3</text>
+<text x="750" y="361" font-size="23" font-weight="700" fill="#0B5F56">AI review</text>
+<text x="706" y="402" font-size="17" fill="#101820">Confirm doubtful finds,</text>
+<text x="706" y="426" font-size="17" fill="#101820">add missed ones</text>
+<line x1="949" y1="388" x2="971" y2="388" stroke="#0F8B7D" stroke-width="2.6" marker-end="url(#ah)"/>
+<rect x="974" y="318" width="260" height="140" rx="14" fill="#101820" stroke="#3FC4B1" stroke-width="2.6"/>
+<circle cx="1008" cy="354" r="18" fill="#3FC4B1"/>
+<text x="1008" y="361" font-size="20" font-weight="800" fill="#101820" text-anchor="middle">4</text>
+<text x="1038" y="361" font-size="23" font-weight="700" fill="#FFFFFF">Human approval</text>
+<text x="994" y="402" font-size="17" fill="#C9D5DF">Officer approves what</text>
+<text x="994" y="426" font-size="17" fill="#C9D5DF">gets removed</text>
+<line x1="1237" y1="388" x2="1259" y2="388" stroke="#0F8B7D" stroke-width="2.6" marker-end="url(#ah)"/>
+<rect x="1262" y="318" width="260" height="140" rx="14" fill="#FFFFFF" stroke="#0F8B7D" stroke-width="2.6"/>
+<circle cx="1296" cy="354" r="18" fill="#0F8B7D"/>
+<text x="1296" y="361" font-size="20" font-weight="800" fill="#FFFFFF" text-anchor="middle">5</text>
+<text x="1326" y="361" font-size="23" font-weight="700" fill="#0B5F56">Redact</text>
+<text x="1282" y="402" font-size="17" fill="#101820">Remove it, keep the</text>
+<text x="1282" y="426" font-size="17" fill="#101820">layout</text>
+<line x1="1525" y1="388" x2="1547" y2="388" stroke="#0F8B7D" stroke-width="2.6" marker-end="url(#ah)"/>
+<rect x="1550" y="318" width="260" height="140" rx="14" fill="#FFFFFF" stroke="#0F8B7D" stroke-width="2.6"/>
+<circle cx="1584" cy="354" r="18" fill="#0F8B7D"/>
+<text x="1584" y="361" font-size="20" font-weight="800" fill="#FFFFFF" text-anchor="middle">6</text>
+<text x="1614" y="361" font-size="23" font-weight="700" fill="#0B5F56">Verify</text>
+<text x="1570" y="402" font-size="17" fill="#101820">Re-scan the output</text>
+<text x="1570" y="426" font-size="17" fill="#101820">for leftovers</text>
+<rect x="398" y="530" width="260" height="140" rx="14" fill="#FFF1E0" stroke="#E07B12" stroke-width="2.4"/>
+<text x="416" y="564" font-size="22" font-weight="700" fill="#9A4F00">Detection engine</text>
+<text x="416" y="592" font-size="16" fill="#101820">Microsoft Presidio,</text>
+<text x="416" y="615" font-size="16" fill="#101820">spaCy, custom rules</text>
+<text x="416" y="638" font-size="16" fill="#101820">(Aadhaar, PAN, IDs)</text>
+<rect x="686" y="530" width="260" height="140" rx="14" fill="#F1E9FF" stroke="#7C4DDB" stroke-width="2.4"/>
+<text x="704" y="564" font-size="22" font-weight="700" fill="#4F2BA6">Language model</text>
+<text x="704" y="592" font-size="16" fill="#101820">Azure GenAI Lab</text>
+<text x="704" y="615" font-size="16" fill="#101820">GPT-4o-mini</text>
+<text x="704" y="638" font-size="16" fill="#101820">Reviews, never decides</text>
+<rect x="974" y="530" width="260" height="140" rx="14" fill="#E9ECFF" stroke="#4F5BD5" stroke-width="2.4"/>
+<text x="992" y="564" font-size="22" font-weight="700" fill="#2F3A9E">Approval roles</text>
+<text x="992" y="592" font-size="16" fill="#101820">Analyst scans, submits</text>
+<text x="992" y="615" font-size="16" fill="#101820">Officer approves and</text>
+<text x="992" y="638" font-size="16" fill="#101820">views the audit trail</text>
+<rect x="1262" y="530" width="260" height="140" rx="14" fill="#FFF1E0" stroke="#E07B12" stroke-width="2.4"/>
+<text x="1280" y="564" font-size="22" font-weight="700" fill="#9A4F00">File handlers</text>
+<text x="1280" y="592" font-size="16" fill="#101820">Word, Excel, PowerPoint</text>
+<text x="1280" y="615" font-size="16" fill="#101820">PDF, text, email</text>
+<text x="1280" y="638" font-size="16" fill="#101820">Layout kept</text>
+<line x1="528" y1="460" x2="528" y2="528" stroke="#475569" stroke-width="2.6" stroke-dasharray="6 6" marker-end="url(#ahs)"/>
+<line x1="816" y1="460" x2="816" y2="528" stroke="#475569" stroke-width="2.6" stroke-dasharray="6 6" marker-end="url(#ahs)"/>
+<line x1="1104" y1="460" x2="1104" y2="528" stroke="#475569" stroke-width="2.6" stroke-dasharray="6 6" marker-end="url(#ahs)"/>
+<line x1="1392" y1="460" x2="1392" y2="528" stroke="#475569" stroke-width="2.6" stroke-dasharray="6 6" marker-end="url(#ahs)"/>
+<rect x="110" y="722" width="1412" height="166" rx="16" fill="#FAFBFD" stroke="#94A3B8" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="130" y="750" font-size="15" font-weight="600" fill="#475569" text-anchor="start" letter-spacing="1.4">KNOWLEDGE AND SAFETY AROUND THE AI</text>
+<rect x="130" y="766" width="430" height="108" rx="14" fill="#E6F1FF" stroke="#2F7DD1" stroke-width="2.4"/>
+<text x="148" y="800" font-size="21" font-weight="700" fill="#1B528F">Policy knowledge</text>
+<text x="148" y="828" font-size="16" fill="#101820">ChromaDB, BM25, cross-encoder</text>
+<text x="148" y="851" font-size="16" fill="#101820">Azure text-embedding-3-large</text>
+<rect x="588" y="766" width="430" height="108" rx="14" fill="#FFEBEE" stroke="#D6455D" stroke-width="2.4"/>
+<text x="606" y="800" font-size="21" font-weight="700" fill="#99223A">NeMo Guardrails</text>
+<text x="606" y="828" font-size="16" fill="#101820">Blocks misuse, hides personal data</text>
+<text x="606" y="851" font-size="16" fill="#101820">in AI answers</text>
+<rect x="1046" y="766" width="430" height="108" rx="14" fill="#E6F1FF" stroke="#2F7DD1" stroke-width="2.4"/>
+<text x="1064" y="800" font-size="21" font-weight="700" fill="#1B528F">Policy assistant</text>
+<text x="1064" y="828" font-size="16" fill="#101820">Answers privacy questions with</text>
+<text x="1064" y="851" font-size="16" fill="#101820">cited policy sections</text>
+<line x1="816" y1="672" x2="816" y2="720" stroke="#475569" stroke-width="2.6" stroke-dasharray="6 6" marker-end="url(#ahs)"/>
+<text x="830" y="708" font-size="14" font-weight="400" fill="#52606D" text-anchor="start" letter-spacing="0" font-style="italic">grounded by policy</text>
+<rect x="1550" y="530" width="260" height="100" rx="14" fill="#E8F7EC" stroke="#2E9E4F" stroke-width="2.4"/>
+<text x="1568" y="564" font-size="21" font-weight="700" fill="#1D6B34">Redacted documents</text>
+<text x="1568" y="592" font-size="16" fill="#101820">Same format, same layout</text>
+<rect x="1550" y="650" width="260" height="100" rx="14" fill="#E8F7EC" stroke="#2E9E4F" stroke-width="2.4"/>
+<text x="1568" y="684" font-size="21" font-weight="700" fill="#1D6B34">Summary reports</text>
+<text x="1568" y="712" font-size="16" fill="#101820">Markdown, CSV, JSON</text>
+<rect x="1550" y="770" width="260" height="100" rx="14" fill="#FFEBEE" stroke="#D6455D" stroke-width="2.4"/>
+<text x="1568" y="804" font-size="21" font-weight="700" fill="#99223A">Audit trail</text>
+<text x="1568" y="832" font-size="16" fill="#101820">Fingerprints only</text>
+<text x="1568" y="855" font-size="16" fill="#101820">Officer access only</text>
+<line x1="1680" y1="460" x2="1680" y2="528" stroke="#475569" stroke-width="2.6" marker-end="url(#ah)"/>
+<text x="1696" y="508" font-size="14" font-weight="600" fill="#1D6B34" text-anchor="start" letter-spacing="1.6">OUTPUTS</text>
+<rect x="110" y="922" width="1412" height="74" rx="14" fill="#FDF6DC" stroke="#B8930B" stroke-width="2.4"/>
+<text x="128" y="956" font-size="21" font-weight="700" fill="#7A6107">Offline quality checks</text>
+<text x="390" y="966" font-size="17" fill="#101820">RAGAS scores the policy assistant  ·  detection precision and recall on synthetic data  ·  19 automated tests</text>
+<text x="60" y="1030" font-size="16" font-weight="400" fill="#64748B" text-anchor="start" letter-spacing="0">Stack:  LangGraph  ·  Azure GenAI Lab (GPT-4o-mini, text-embedding-3-large)  ·  ChromaDB  ·  BM25 + cross-encoder  ·  Microsoft Presidio  ·  NeMo Guardrails  ·  RAGAS  ·  Python logging  ·  Streamlit</text></svg>
